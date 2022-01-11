@@ -1,0 +1,93 @@
+name: Release
+on:
+  workflow_call:
+    inputs:
+      version:
+        description: "Minecraft version"
+        required: true
+        type: string
+      build:
+        description: "Paper build number"
+        required: true
+        type: number
+      commit:
+        description: "Commit hash of the build"
+        required: true
+        type: string
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Minecraft version"
+        required: true
+        type: string
+      build:
+        description: "Paper build number"
+        required: true
+        type: number
+      commit:
+        description: "Commit hash of the build"
+        required: true
+        type: string
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        java: [17]
+      fail-fast: true
+    steps:
+      - name: Checkout PaperMC/Paper
+        uses: actions/checkout@v2.4.0
+        with:
+          repository: PaperMC/Paper
+          ref: ${{ inputs.commit }}
+      - name: Setup JDK ${{ matrix.java }}
+        uses: actions/setup-java@v2.5.0
+        with:
+          distribution: temurin
+          java-version: ${{ matrix.java }}
+          cache: gradle
+      - name: Install fish Shell
+        uses: fish-actions/install-fish@v1.1.0
+      - name: Apply Patches
+        run: |
+          git config --global user.email "no-reply@github.com"
+          git config --global user.name "Github Actions"
+          ./gradlew applyPatches --stacktrace
+      - name: Drop Bad Patches
+        shell: fish
+        env:
+          BAD_PATCHES: |
+            Fix sand duping
+            Fix dangerous end portal logic
+        working-directory: Paper-Server
+        run: |
+          for msg in $BAD_PATCHES
+              if test -n "$msg" && set -l hash (git rev-parse ":/^$msg" 2>/dev/null)
+                  echo "Dropping commit: "(git log --oneline -1 $hash)
+                  git rebase --onto $hash^ $hash -q && echo Success || echo Fail
+              end
+          end
+      - name: Build Paperclip jar
+        env:
+          BUILD_NUMBER: ${{ inputs.build }}
+        run: |
+          ./gradlew createReobfPaperclipJar --stacktrace
+      - name: Prepare Release
+        shell: fish
+        run: |
+          sudo wget https://github.com/BLAKE3-team/BLAKE3/releases/latest/download/b3sum_linux_x64_bin -O /usr/bin/b3sum
+          sudo chmod +x /usr/bin/b3sum
+          mv build/libs/paper-paperclip-(grep -Po '^version=\K.+$' gradle.properties)-reobf.jar paper.jar
+          b3sum paper.jar > paper.b3sum
+          echo -e "BLAKE3 checksum:\n\n```\n"(cat paper.b3sum)"\n```" > release_note.txt
+      - name: Release
+        uses: softprops/action-gh-release@v0.1.14
+        with:
+          name: ${{ inputs.version }}-${{ inputs.build }}
+          tag_name: ${{ inputs.version }}-${{ inputs.build }}
+          body_path: release_note.txt
+          files: |
+            paper.jar
+            paper.b3sum
