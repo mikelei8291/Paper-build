@@ -1,0 +1,34 @@
+name: Update
+on:
+  schedule:
+    # Runs at 00:30 UTC every day
+    - cron: "30 0 * * *"
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install fish Shell
+        uses: fish-actions/install-fish@v1.1.0
+      - name: Update Build Data
+        shell: fish
+        run: |
+          set -l current_tag (curl -sLf $GITHUB_API_URL/repos/$GITHUB_REPOSITORY/releases/latest | jq -r '.tag_name')
+          set -l current_version (string split -f1 - $current_tag)
+          echo "current_build="(string split -f2 - $current_tag) >> $GITHUB_ENV
+          set -l version_group (curl -sLf https://papermc.io/api/v2/projects/paper | jq -r '.version_groups[-1]')
+          set -l build_data (curl -sLf https://papermc.io/api/v2/projects/paper/version_group/$version_group/builds | jq -cr '.builds[-1]')
+          set -l mc_version (echo $build_data | jq -r '.version')
+          echo "mc_version=$mc_version" >> $GITHUB_ENV
+          echo "build="(echo $build_data | jq -r '.build') >> $GITHUB_ENV
+          echo "channel="(echo $build_data | jq -r '.channel') >> $GITHUB_ENV
+          echo "commit="(echo $build_data | jq -r '.changes[0].commit') >> $GITHUB_ENV
+          echo "target_version="(echo -e "$current_version\n$mc_version" | sort -rV | head -1) >> $GITHUB_ENV
+      - name: Build Release
+        if: ${{ env.channel == "default" && env.mc_version == env.target_version && fromJSON(env.build) > fromJSON(env.current_build) }}
+        uses: mikelei8291/Paper-build/.github/workflows/release.yml@master
+        with:
+          version: ${{ env.mc_version }}
+          build: ${{ env.build }}
+          commit: ${{ env.commit }}
