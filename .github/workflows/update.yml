@@ -25,6 +25,7 @@ jobs:
           echo "channel="(echo $build_data | jq -r '.channel') >> $GITHUB_ENV
           echo "commit="(echo $build_data | jq -r '.changes[0].commit') >> $GITHUB_ENV
           echo "target_version="(echo -e "$current_version\n$mc_version" | sort -rV | head -1) >> $GITHUB_ENV
+          cat $GITHUB_ENV
   release:
     needs: update
     if: ${{ needs.update.env.channel == 'default' && needs.update.env.mc_version == needs.update.env.target_version && fromJSON(needs.update.env.build) > fromJSON(needs.update.env.current_build) }}
