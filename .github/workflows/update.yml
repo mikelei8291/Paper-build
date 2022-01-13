@@ -12,7 +12,7 @@ jobs:
       - name: Install fish Shell
         uses: fish-actions/install-fish@v1.1.0
       - name: Update Build Data
-        shell: fish
+        shell: fish {0}
         run: |
           set -l current_tag (curl -sLf $GITHUB_API_URL/repos/$GITHUB_REPOSITORY/releases/latest | jq -r '.tag_name')
           set -l current_version (string split -f1 - $current_tag)
@@ -25,10 +25,11 @@ jobs:
           echo "channel="(echo $build_data | jq -r '.channel') >> $GITHUB_ENV
           echo "commit="(echo $build_data | jq -r '.changes[0].commit') >> $GITHUB_ENV
           echo "target_version="(echo -e "$current_version\n$mc_version" | sort -rV | head -1) >> $GITHUB_ENV
-      - name: Build Release
-        if: ${{ env.channel == "default" && env.mc_version == env.target_version && fromJSON(env.build) > fromJSON(env.current_build) }}
-        uses: mikelei8291/Paper-build/.github/workflows/release.yml@master
-        with:
-          version: ${{ env.mc_version }}
-          build: ${{ env.build }}
-          commit: ${{ env.commit }}
+  release:
+    needs: update
+    if: ${{ needs.update.env.channel == 'default' && needs.update.env.mc_version == needs.update.env.target_version && fromJSON(needs.update.env.build) > fromJSON(needs.update.env.current_build) }}
+    uses: mikelei8291/Paper-build/.github/workflows/release.yml@master
+    with:
+      version: ${{ needs.update.env.mc_version }}
+      build: ${{ needs.update.env.build }}
+      commit: ${{ needs.update.env.commit }}
