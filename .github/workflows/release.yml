@@ -81,7 +81,6 @@ jobs:
                   git rebase --onto $hash^ $hash -q && echo Success || echo Fail
               else
                   echo "Commit not found: $msg"
-                  return 1
               end
           end
       - name: Build Paperclip jar
