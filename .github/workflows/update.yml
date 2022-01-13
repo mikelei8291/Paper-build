@@ -28,9 +28,12 @@ jobs:
           cat $GITHUB_ENV
   release:
     needs: update
-    if: ${{ needs.update.env.channel == 'default' && needs.update.env.mc_version == needs.update.env.target_version && fromJSON(needs.update.env.build) > fromJSON(needs.update.env.current_build) }}
-    uses: mikelei8291/Paper-build/.github/workflows/release.yml@master
-    with:
-      version: ${{ needs.update.env.mc_version }}
-      build: ${{ needs.update.env.build }}
-      commit: ${{ needs.update.env.commit }}
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          echo "current_build=${{ needs.update.env.current_build }}"
+          echo "mc_version=${{ needs.update.env.mc_version }}"
+          echo "build=${{ needs.update.env.build }}"
+          echo "channel=${{ needs.update.env.channel }}"
+          echo "commit=${{ needs.update.env.commit }}"
+          echo "target_version=${{ needs.update.env.target_version }}"
