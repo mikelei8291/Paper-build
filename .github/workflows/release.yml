@@ -75,6 +75,7 @@ jobs:
             Fix dangerous end portal logic
         working-directory: Paper-Server
         run: |
+          set -S BAD_PATCHES
           for msg in $BAD_PATCHES
               if test -n "$msg" && set -l hash (git rev-parse ":/^$msg" 2>/dev/null)
                   echo "Dropping commit: "(git log --oneline -1 $hash)
