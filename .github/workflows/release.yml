@@ -44,6 +44,8 @@ jobs:
       build: ${{ inputs.build }}
       commit: ${{ inputs.commit }}
     steps:
+      - name: Install fish Shell
+        uses: fish-actions/install-fish@v1.1.0
       - name: Setup Env for workflow_dispatch Events
         if: ${{ github.event_name == 'workflow_dispatch' }}
         run: |
@@ -61,8 +63,6 @@ jobs:
           distribution: temurin
           java-version: ${{ matrix.java }}
           cache: gradle
-      - name: Install fish Shell
-        uses: fish-actions/install-fish@v1.1.0
       - name: Apply Patches
         run: |
           git config --global user.email "no-reply@github.com"
