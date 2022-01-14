@@ -8,32 +8,48 @@ on:
 jobs:
   update:
     runs-on: ubuntu-latest
+    outputs:
+      current_build:
+        description: "Paper build number of the current release of this repository"
+        value: ${{ steps.data.outputs.current_build }}
+      mc_version:
+        description: "Minecraft version of the latest Paper build"
+        value: ${{ steps.data.outputs.mc_version }}
+      build:
+        description: "Build number of the latest Paper build"
+        value: ${{ steps.data.outputs.build }}
+      channel:
+        description: "Release channel of the latest Paper build"
+        value: ${{ steps.data.outputs.channel }}
+      commit:
+        description: "Commit hash of the latest Paper build"
+        value: ${{ steps.data.outputs.commit }}
+      target_version:
+        description: "Minecraft version of this new release of this repository"
+        value: ${{ steps.data.outputs.target_version }}
     steps:
       - name: Install fish Shell
         uses: fish-actions/install-fish@v1.1.0
       - name: Update Build Data
+        id: data
         shell: fish {0}
         run: |
           set -l current_tag (curl -sLf $GITHUB_API_URL/repos/$GITHUB_REPOSITORY/releases/latest | jq -r '.tag_name')
           set -l current_version (string split -f1 - $current_tag)
-          echo "current_build="(string split -f2 - $current_tag) >> $GITHUB_ENV
+          echo "::set-output name=current_build::"(string split -f2 - $current_tag)
           set -l version_group (curl -sLf https://papermc.io/api/v2/projects/paper | jq -r '.version_groups[-1]')
           set -l build_data (curl -sLf https://papermc.io/api/v2/projects/paper/version_group/$version_group/builds | jq -cr '.builds[-1]')
           set -l mc_version (echo $build_data | jq -r '.version')
-          echo "mc_version=$mc_version" >> $GITHUB_ENV
-          echo "build="(echo $build_data | jq -r '.build') >> $GITHUB_ENV
-          echo "channel="(echo $build_data | jq -r '.channel') >> $GITHUB_ENV
-          echo "commit="(echo $build_data | jq -r '.changes[0].commit') >> $GITHUB_ENV
-          echo "target_version="(echo -e "$current_version\n$mc_version" | sort -rV | head -1) >> $GITHUB_ENV
-          cat $GITHUB_ENV
+          echo "::set-output name=mc_version::$mc_version"
+          echo "::set-output name=build::"(echo $build_data | jq -r '.build')
+          echo "::set-output name=channel::"(echo $build_data | jq -r '.channel')
+          echo "::set-output name=commit::"(echo $build_data | jq -r '.changes[0].commit')
+          echo "::set-output name=target_version::"(echo -e "$current_version\n$mc_version" | sort -rV | head -1)
   release:
     needs: update
-    runs-on: ubuntu-latest
-    steps:
-      - run: |
-          echo "current_build=${{ needs.update.env.current_build }}"
-          echo "mc_version=${{ needs.update.env.mc_version }}"
-          echo "build=${{ needs.update.env.build }}"
-          echo "channel=${{ needs.update.env.channel }}"
-          echo "commit=${{ needs.update.env.commit }}"
-          echo "target_version=${{ needs.update.env.target_version }}"
+    if: ${{ needs.update.outputs.channel == 'default' && needs.update.outputs.mc_version == needs.update.outputs.target_version && fromJSON(needs.update.outputs.build) > fromJSON(needs.update.outputs.current_build) }}
+    uses: mikelei8291/Paper-build/.github/workflows/release.yml@master
+    with:
+      version: ${{ needs.update.outputs.mc_version }}
+      build: ${{ needs.update.outputs.build }}
+      commit: ${{ needs.update.outputs.commit }}
