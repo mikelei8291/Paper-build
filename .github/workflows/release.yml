@@ -40,18 +40,18 @@ jobs:
         java: [17]
       fail-fast: true
     env:
-      version: ${{ inputs.version }}
-      build: ${{ inputs.build }}
-      commit: ${{ inputs.commit }}
+      version: ${{ inputs.version || github.event.inputs.version }}
+      build: ${{ inputs.build || github.event.inputs.build }}
+      commit: ${{ inputs.commit || github.event.inputs.commit }}
     steps:
       - name: Install fish Shell
         uses: fish-actions/install-fish@v1.1.0
-      - name: Setup Env for workflow_dispatch Events
-        if: ${{ github.event_name == 'workflow_dispatch' }}
-        run: |
-          echo "version=${{ github.event.inputs.version }}" >> $GITHUB_ENV
-          echo "build=${{ github.event.inputs.build }}" >> $GITHUB_ENV
-          echo "commit=${{ github.event.inputs.commit }}" >> $GITHUB_ENV
+      # - name: Setup Env for ${{ github.event_name }} Events
+      #   if: ${{ github.event_name == 'workflow_dispatch' }}
+      #   run: |
+      #     echo "version=${{ github.event.inputs.version }}" >> $GITHUB_ENV
+      #     echo "build=${{ github.event.inputs.build }}" >> $GITHUB_ENV
+      #     echo "commit=${{ github.event.inputs.commit }}" >> $GITHUB_ENV
       - name: Checkout PaperMC/Paper
         uses: actions/checkout@v2.4.0
         with:
