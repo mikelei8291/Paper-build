@@ -84,7 +84,7 @@ jobs:
           ./gradlew createReobfPaperclipJar --stacktrace
       - name: Prepare Release
         run: |
-          sudo wget https://github.com/BLAKE3-team/BLAKE3/releases/latest/download/b3sum_linux_x64_bin -O /usr/bin/b3sum
+          sudo wget -nv --show-progress --progress=bar:force:noscroll https://github.com/BLAKE3-team/BLAKE3/releases/latest/download/b3sum_linux_x64_bin -O /usr/bin/b3sum
           sudo chmod +x /usr/bin/b3sum
           mv build/libs/paper-paperclip-(grep -Po '^version=\K.+$' gradle.properties)-reobf.jar paper.jar
           b3sum paper.jar > paper.b3sum
