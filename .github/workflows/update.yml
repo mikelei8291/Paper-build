@@ -28,6 +28,7 @@ jobs:
         id: data
         shell: fish {0}
         run: |
+          echo "::echo::on"
           set -l current_tag (curl -sLf $GITHUB_API_URL/repos/$GITHUB_REPOSITORY/releases/latest | jq -r '.tag_name')
           set -l current_version (string split -f1 - $current_tag)
           echo "::set-output name=current_build::"(string split -f2 - $current_tag)
