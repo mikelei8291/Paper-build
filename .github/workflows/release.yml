@@ -89,6 +89,7 @@ jobs:
           mv build/libs/paper-paperclip-(grep -Po '^version=\K.+$' gradle.properties)-reobf.jar paper.jar
           b3sum paper.jar > paper.b3sum
           echo -e "## Changelog\n" > release_note.txt
+          set -S version build
           curl -sLf https://papermc.io/api/v2/projects/paper/versions/$version/builds/$build\
           | jq -r '.changes[] | "- [PaperMC/Paper@\(.commit[:7])] \(.summary)"'\
           | string replace -ra '#\d+' 'PaperMC/Paper$0' >> release_note.txt
