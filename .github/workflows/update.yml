@@ -9,24 +9,18 @@ jobs:
   update:
     runs-on: ubuntu-latest
     outputs:
-      current_build:
-        description: "Paper build number of the current release of this repository"
-        value: ${{ steps.data.outputs.current_build }}
-      mc_version:
-        description: "Minecraft version of the latest Paper build"
-        value: ${{ steps.data.outputs.mc_version }}
-      build:
-        description: "Build number of the latest Paper build"
-        value: ${{ steps.data.outputs.build }}
-      channel:
-        description: "Release channel of the latest Paper build"
-        value: ${{ steps.data.outputs.channel }}
-      commit:
-        description: "Commit hash of the latest Paper build"
-        value: ${{ steps.data.outputs.commit }}
-      target_version:
-        description: "Minecraft version of this new release of this repository"
-        value: ${{ steps.data.outputs.target_version }}
+      # Paper build number of the current release of this repository
+      current_build: ${{ steps.data.outputs.current_build }}
+      # Minecraft version of the latest Paper build
+      mc_version: ${{ steps.data.outputs.mc_version }}
+      # Build number of the latest Paper build
+      build: ${{ steps.data.outputs.build }}
+      # Release channel of the latest Paper build
+      channel: ${{ steps.data.outputs.channel }}
+      # Commit hash of the latest Paper build
+      commit: ${{ steps.data.outputs.commit }}
+      # Minecraft version of this new release of this repository
+      target_version: ${{ steps.data.outputs.target_version }}
     steps:
       - name: Install fish Shell
         uses: fish-actions/install-fish@v1.1.0
