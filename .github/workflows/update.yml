@@ -46,5 +46,5 @@ jobs:
     uses: mikelei8291/Paper-build/.github/workflows/release.yml@master
     with:
       version: "1.18.1"
-      build: "150"
+      build: 150
       commit: "0c64d401aaa5e297f1d72b91370d24c947e19d99"
