@@ -1,8 +1,8 @@
 name: Update
 on:
   schedule:
-    # Runs at 00:30 UTC every day
-    - cron: "30 0 * * *"
+    # Runs at 00:30, 08:30 and 16:30 UTC every day
+    - cron: "30 0/8 * * *"
   workflow_dispatch:
 
 jobs:
@@ -42,7 +42,10 @@ jobs:
           echo "::set-output name=target_version::"(echo -e "$current_version\n$mc_version" | sort -rV | head -1)
   release:
     needs: update
-    if: ${{ needs.update.outputs.channel == 'default' && needs.update.outputs.mc_version == needs.update.outputs.target_version && fromJSON(needs.update.outputs.build) > fromJSON(needs.update.outputs.current_build) }}
+    if: >-
+      needs.update.outputs.channel == 'default'
+      && needs.update.outputs.mc_version == needs.update.outputs.target_version
+      && fromJSON(needs.update.outputs.build) > fromJSON(needs.update.outputs.current_build)
     uses: mikelei8291/Paper-build/.github/workflows/release.yml@master
     with:
       version: ${{ needs.update.outputs.mc_version }}
