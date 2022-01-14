@@ -80,7 +80,7 @@ jobs:
                   echo "Dropping commit: "(git log --oneline -1 $hash)
                   git rebase --onto $hash^ $hash -q && echo Success || echo Fail
               else
-                  echo "Commit not found: $msg"
+                  echo "::warning::Commit not found: $msg"
               end
           end
       - name: Build Paperclip jar
