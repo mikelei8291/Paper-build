@@ -64,12 +64,12 @@ jobs:
           ./gradlew applyPatches --stacktrace
       - name: Drop Bad Patches
         env:
-          BAD_PATCHES: |
+          BAD_PATCHES: |-
             Fix sand duping
             Fix dangerous end portal logic
         working-directory: Paper-Server
         run: |
-          for msg in (string split -n \n $BAD_PATCHES)
+          for msg in (string split \n $BAD_PATCHES)
               if set -l hash (git rev-parse ":/^$msg" 2>/dev/null)
                   echo "Dropping commit: "(git log --oneline -1 $hash)
                   git rebase --onto $hash^ $hash -q && echo Success || echo Fail
