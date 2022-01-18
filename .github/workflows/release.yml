@@ -10,6 +10,10 @@ on:
         description: "Paper build number"
         required: true
         type: number
+      current_build:
+        description: "Current Paper build number"
+        required: false
+        type: number
       commit:
         description: "Commit hash of the build"
         required: true
@@ -23,6 +27,10 @@ on:
       build:
         description: "Paper build number"
         required: true
+        type: number
+      current_build:
+        description: "Current Paper build number"
+        required: false
         type: number
       commit:
         description: "Commit hash of the build"
@@ -42,6 +50,7 @@ jobs:
     env:
       version: ${{ inputs.version || github.event.inputs.version }}
       build: ${{ inputs.build || github.event.inputs.build }}
+      current_build: ${{ inputs.current_build || github.event.inputs.current_build }}
       commit: ${{ inputs.commit || github.event.inputs.commit }}
     steps:
       - name: Install fish Shell
@@ -89,9 +98,14 @@ jobs:
           mv build/libs/paper-paperclip-(grep -Po '^version=\K.+$' gradle.properties)-reobf.jar paper.jar
           b3sum paper.jar > paper.b3sum
           echo -e "## Changelog\n" > release_note.txt
-          curl -sLf https://papermc.io/api/v2/projects/paper/versions/${{ env.version }}/builds/${{ env.build }}\
-          | jq -r '.changes[] | "- [PaperMC/Paper@\(.commit[:7])] \(.summary)"'\
-          | string replace -ra '#\d+' 'PaperMC/Paper$0' >> release_note.txt
+          if test $current_build -ne 0 -a (math $build - $current_build) -gt 1
+              curl -sLf https://papermc.io/api/v2/projects/paper/version_group/(string match -r '\d+\.\d+' ${{ env.version }})/builds\
+              | jq -r '.builds[] | select(.build > '$current_build' and .build <= '$build')
+                  | "- **\(.build)**", "  - \((.changes[] | "[PaperMC/Paper@\(.commit[:7])] \(.summary)") // "No changes")"'
+          else
+              curl -sLf https://papermc.io/api/v2/projects/paper/versions/${{ env.version }}/builds/$build\
+              | jq -r '"- \((.changes[] | "[PaperMC/Paper@\(.commit[:7])] \(.summary)") // "No changes")"'
+          end | string replace -ra '#\d+' 'PaperMC/Paper$0' >> release_note.txt
           echo -e "\n## BLAKE3 checksum\n\n```\n"(cat paper.b3sum)"\n```" >> release_note.txt
       - name: Release
         uses: softprops/action-gh-release@v0.1.14
