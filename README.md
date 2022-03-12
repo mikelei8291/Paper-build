@@ -8,7 +8,7 @@ Custom build of the high performance Spigot fork
 
 - GitHub: https://github.com/PaperMC/Paper
 - Website: https://papermc.io
-- Documentation: https://paper.readthedocs.io/en/latest/
+- Documentation: https://docs.papermc.io
 
 ## Dropped Patches
 
