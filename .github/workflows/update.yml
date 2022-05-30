@@ -44,6 +44,7 @@ jobs:
     needs: update
     if: >-
       needs.update.outputs.channel == 'default'
+      && needs.update.outputs.commit != 'null'
       && needs.update.outputs.mc_version == needs.update.outputs.target_version
       && fromJSON(needs.update.outputs.build) > fromJSON(needs.update.outputs.current_build)
     uses: mikelei8291/Paper-build/.github/workflows/release.yml@master
