@@ -28,13 +28,16 @@ jobs:
         id: data
         shell: fish {0}
         run: |
-          echo "::echo::on"
-          set -l current_tag (curl -sLf $GITHUB_API_URL/repos/$GITHUB_REPOSITORY/releases/latest | jq -r '.tag_name')
-          set -l current_version (string split -f1 - $current_tag)
-          echo "::set-output name=current_build::"(string split -f2 - $current_tag)
           set -l version_group (curl -sLf https://api.papermc.io/v2/projects/paper | jq -r '.version_groups[-1]')
           set -l build_data (curl -sLf https://api.papermc.io/v2/projects/paper/version_group/$version_group/builds | jq -cr '.builds[-1]')
           set -l mc_version (echo $build_data | jq -r '.version')
+          set -l current_tag (curl -sLf $GITHUB_API_URL/repos/$GITHUB_REPOSITORY/releases/latest | jq -r '.tag_name')
+          set -l current_version (string split -f1 - $current_tag)
+          test "$mc_version" = "$current_version"
+          and set -l current_build (string split -f2 - $current_tag)
+          or set -l current_build 0
+          echo "::echo::on"
+          echo "::set-output name=current_build::$current_build"
           echo "::set-output name=mc_version::$mc_version"
           echo "::set-output name=build::"(echo $build_data | jq -r '.build')
           echo "::set-output name=channel::"(echo $build_data | jq -r '.channel')
