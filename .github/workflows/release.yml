@@ -106,7 +106,7 @@ jobs:
               curl -sLf https://api.papermc.io/v2/projects/paper/versions/${{ env.mc_version }}/builds/$build\
               | jq -r '"- \((.changes[] | "[PaperMC/Paper@\(.commit[:7])] \(.summary)") // "No changes")"'
           end | string replace -ra '#\d+' 'PaperMC/Paper$0' >> release_note.md
-          echo -e "\n## BLAKE3 checksum\n\n```\n"(cat paper.b3sum)"\n```" >> release_note.md
+          echo -e "\n## BLAKE3 checksum\n\n```\n$(cat paper.b3sum)\n```" >> release_note.md
       - name: Release
         uses: softprops/action-gh-release@v0.1.14
         with:
