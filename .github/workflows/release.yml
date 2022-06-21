@@ -97,7 +97,7 @@ jobs:
           sudo chmod +x /usr/bin/b3sum
           mv build/libs/paper-paperclip-(grep -Po '^version=\K.+$' gradle.properties)-reobf.jar paper.jar
           b3sum paper.jar > paper.b3sum
-          echo -e "## Changelog\n" > release_note.txt
+          echo -e "## Changelog\n" > release_note.md
           if test (math $build - $current_build) -gt 1
               curl -sLf https://api.papermc.io/v2/projects/paper/version_group/(string match -r '\d+\.\d+' ${{ env.mc_version }})/builds\
               | jq -r '.builds[] | select(.build > '$current_build' and .build <= '$build')
@@ -105,14 +105,14 @@ jobs:
           else
               curl -sLf https://api.papermc.io/v2/projects/paper/versions/${{ env.mc_version }}/builds/$build\
               | jq -r '"- \((.changes[] | "[PaperMC/Paper@\(.commit[:7])] \(.summary)") // "No changes")"'
-          end | string replace -ra '#\d+' 'PaperMC/Paper$0' >> release_note.txt
-          echo -e "\n## BLAKE3 checksum\n\n```\n"(cat paper.b3sum)"\n```" >> release_note.txt
+          end | string replace -ra '#\d+' 'PaperMC/Paper$0' >> release_note.md
+          echo -e "\n## BLAKE3 checksum\n\n```\n"(cat paper.b3sum)"\n```" >> release_note.md
       - name: Release
         uses: softprops/action-gh-release@v0.1.14
         with:
           name: ${{ env.mc_version }}-${{ env.build }}
           tag_name: ${{ env.mc_version }}-${{ env.build }}
-          body_path: release_note.txt
+          body_path: release_note.md
           files: |
             paper.jar
             paper.b3sum
