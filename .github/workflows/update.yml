@@ -53,6 +53,6 @@ jobs:
     uses: mikelei8291/Paper-build/.github/workflows/release.yml@master
     with:
       version: ${{ needs.update.outputs.mc_version }}
-      build: ${{ fromJSON(needs.update.outputs.build) }}
-      current_build: ${{ fromJSON(needs.update.outputs.current_build) }}
+      build: ${{ needs.update.outputs.build }}
+      current_build: ${{ needs.update.outputs.current_build }}
       commit: ${{ needs.update.outputs.commit }}

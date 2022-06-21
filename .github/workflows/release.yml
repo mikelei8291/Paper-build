@@ -9,11 +9,11 @@ on:
       build:
         description: "Paper build number"
         required: true
-        type: number
+        type: string
       current_build:
         description: "Current Paper build number"
         required: false
-        type: number
+        type: string
       commit:
         description: "Commit hash of the build"
         required: true
@@ -27,11 +27,11 @@ on:
       build:
         description: "Paper build number"
         required: true
-        type: number
+        type: string
       current_build:
         description: "Current Paper build number"
         required: false
-        type: number
+        type: string
       commit:
         description: "Commit hash of the build"
         required: true
