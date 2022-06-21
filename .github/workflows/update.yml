@@ -35,7 +35,7 @@ jobs:
           set -l current_version (string split -f1 - $current_tag)
           test "$mc_version" = "$current_version"
           and set -l current_build (string split -f2 - $current_tag)
-          or set -l current_build 0
+          or set -l current_build -1
           echo "::echo::on"
           echo "::set-output name=current_build::$current_build"
           echo "::set-output name=mc_version::$mc_version"
