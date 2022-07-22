@@ -2,7 +2,7 @@
 
 [![Update](https://github.com/mikelei8291/Paper-build/actions/workflows/update.yml/badge.svg)](https://github.com/mikelei8291/Paper-build/actions/workflows/update.yml)
 
-Custom build of the high performance Spigot fork
+Custom build of Paper - the high performance Spigot fork
 
 ## PaperMC
 
