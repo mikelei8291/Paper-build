@@ -56,12 +56,12 @@ jobs:
       - name: Install fish Shell
         uses: fish-actions/install-fish@v1.1.0
       - name: Checkout PaperMC/Paper
-        uses: actions/checkout@v3.0.2
+        uses: actions/checkout@v3
         with:
           repository: PaperMC/Paper
           ref: ${{ env.commit }}
       - name: Setup JDK ${{ matrix.java }}
-        uses: actions/setup-java@v3.3.0
+        uses: actions/setup-java@v3
         with:
           distribution: temurin
           java-version: ${{ matrix.java }}
@@ -109,7 +109,7 @@ jobs:
           end | string replace -ra '#\d+' 'PaperMC/Paper$0' >> release_note.md
           echo -e "\n## BLAKE3 checksum\n\n```\n$(cat paper.b3sum)\n```" >> release_note.md
       - name: Release
-        uses: softprops/action-gh-release@v0.1.14
+        uses: softprops/action-gh-release@v0.1.15
         with:
           name: ${{ env.mc_version }}-${{ env.build }}
           tag_name: ${{ env.mc_version }}-${{ env.build }}
