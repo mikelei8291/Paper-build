@@ -101,6 +101,8 @@ jobs:
           
           ## Changelog
           " > release_note.md
+          echo build: $build
+          echo current_build: $current_build
           if test (math $build - $current_build) -gt 1
               curl -sLf https://api.papermc.io/v2/projects/paper/version_group/(string match -r '\d+\.\d+' ${{ env.mc_version }})/builds\
               | jq -r '.builds[] | select(.build > '$current_build' and .build <= '$build')
