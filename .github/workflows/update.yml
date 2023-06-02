@@ -42,7 +42,7 @@ jobs:
           channel=$(echo $build_data | jq -r '.channel')
           commit=$(echo $build_data | jq -r '.changes[0].commit')
           target_version=$(echo -e "$current_version\n$mc_version" | sort -rV | head -1)" >> "$GITHUB_OUTPUT"
-          cat "$GITHUB_OUTPUT"
+          string replace -a "=" ": " < "$GITHUB_OUTPUT"
   release:
     needs: update
     if: >-
