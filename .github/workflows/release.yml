@@ -108,7 +108,7 @@ jobs:
           else
               curl -sLf https://api.papermc.io/v2/projects/paper/versions/${{ env.mc_version }}/builds/$build\
               | jq -r '"- \((.changes[] | "[PaperMC/Paper@\(.commit[:7])] \(.summary)") // "No changes")"'
-          end | string replace -ra '#\d+' 'PaperMC/Paper$0' >> release_note.md
+          end | string replace -ra '#\d+' 'PaperMC/Paper$0' | string replace -ra ' (@\S+)' ' `$1`' >> release_note.md
           echo "
           ## BLAKE3 checksum
           
