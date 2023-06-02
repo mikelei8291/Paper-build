@@ -97,7 +97,10 @@ jobs:
           sudo chmod +x /usr/bin/b3sum
           mv build/libs/paper-paperclip-(grep -Po '^version=\K.+$' gradle.properties)-reobf.jar paper.jar
           b3sum paper.jar > paper.b3sum
-          echo -e "[![${{ github.workflow }}](https://flat.badgen.net/badge/${{ github.workflow }}/%23${{ github.run_number }}/green?icon=github)](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})\n\n## Changelog\n" > release_note.md
+          echo "[![${{ github.workflow }}](https://flat.badgen.net/badge/${{ github.workflow }}/%23${{ github.run_number }}/green?icon=github)](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
+          
+          ## Changelog
+          " > release_note.md
           if test (math $build - $current_build) -gt 1
               curl -sLf https://api.papermc.io/v2/projects/paper/version_group/(string match -r '\d+\.\d+' ${{ env.mc_version }})/builds\
               | jq -r '.builds[] | select(.build > '$current_build' and .build <= '$build')
@@ -106,7 +109,12 @@ jobs:
               curl -sLf https://api.papermc.io/v2/projects/paper/versions/${{ env.mc_version }}/builds/$build\
               | jq -r '"- \((.changes[] | "[PaperMC/Paper@\(.commit[:7])] \(.summary)") // "No changes")"'
           end | string replace -ra '#\d+' 'PaperMC/Paper$0' >> release_note.md
-          echo -e "\n## BLAKE3 checksum\n\n```\n$(cat paper.b3sum)\n```" >> release_note.md
+          echo "
+          ## BLAKE3 checksum
+          
+          ```
+          $(cat paper.b3sum)
+          ```" >> release_note.md
       - name: Release
         uses: softprops/action-gh-release@v0.1.15
         with:
