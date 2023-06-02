@@ -14,8 +14,8 @@ Custom build of Paper - the high performance Spigot fork
 
 _**Note**: links may not be up to date_
 
-1. Fix sand duping [[Source](https://github.com/PaperMC/Paper/blob/master/patches/server/0422-Fix-sand-duping.patch)]
-2. Fix dangerous end portal logic [[Source](https://github.com/PaperMC/Paper/blob/master/patches/server/0649-Fix-dangerous-end-portal-logic.patch)]
+1. Fix sand duping [[Source](https://github.com/PaperMC/Paper/blob/bacbf86ed272f73f8b2979106589d80d8d70b83b/patches/server/0418-Fix-sand-duping.patch)]
+2. Fix dangerous end portal logic [[Source](https://github.com/PaperMC/Paper/blob/bacbf86ed272f73f8b2979106589d80d8d70b83b/patches/server/0637-Fix-dangerous-end-portal-logic.patch)]
 
 ## Used by
 
