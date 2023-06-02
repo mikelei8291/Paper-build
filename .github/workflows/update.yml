@@ -36,13 +36,13 @@ jobs:
           test (string match -r '^\d+\.\d+' "$mc_version") = (string match -r '^\d+\.\d+' "$current_version")
           and set -l current_build (string split -f2 - $current_tag)
           or set -l current_build -1
-          echo "::echo::on"
-          echo "::set-output name=current_build::$current_build"
-          echo "::set-output name=mc_version::$mc_version"
-          echo "::set-output name=build::"(echo $build_data | jq -r '.build')
-          echo "::set-output name=channel::"(echo $build_data | jq -r '.channel')
-          echo "::set-output name=commit::"(echo $build_data | jq -r '.changes[0].commit')
-          echo "::set-output name=target_version::"(echo -e "$current_version\n$mc_version" | sort -rV | head -1)
+          echo "current_build=$current_build
+          mc_version=$mc_version
+          build=$(echo $build_data | jq -r '.build')
+          channel=$(echo $build_data | jq -r '.channel')
+          commit=$(echo $build_data | jq -r '.changes[0].commit')
+          target_version=$(echo -e "$current_version\n$mc_version" | sort -rV | head -1)" >> "$GITHUB_OUTPUT"
+          cat "$GITHUB_OUTPUT"
   release:
     needs: update
     if: >-
