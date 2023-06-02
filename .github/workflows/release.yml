@@ -76,7 +76,6 @@ jobs:
           BAD_PATCHES: |-
             Fix sand duping
             Fix dangerous end portal logic
-            Fix nothing mlg
         working-directory: Paper-Server
         run: |
           for msg in (string split \n $BAD_PATCHES)
