@@ -12,7 +12,7 @@ on:
         type: string
       current_build:
         description: "Current Paper build number"
-        required: false
+        required: true
         type: string
       commit:
         description: "Commit hash of the build"
@@ -30,7 +30,7 @@ on:
         type: string
       current_build:
         description: "Current Paper build number"
-        required: false
+        required: true
         type: string
       commit:
         description: "Commit hash of the build"
