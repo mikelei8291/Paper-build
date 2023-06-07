@@ -33,7 +33,7 @@ jobs:
           set -l mc_version (echo $build_data | jq -r '.version')
           set -l current_tag (curl -sLf $GITHUB_API_URL/repos/$GITHUB_REPOSITORY/releases/latest | jq -r '.tag_name') || exit 1
           set -l current_version (string split -f1 - $current_tag)
-          test (string match -r '^\d+\.\d+' "$mc_version") = (string match -r '^\d+\.\d+' "$current_version")
+          test "$(string match -r '^\d+\.\d+' "$mc_version")" = "$(string match -r '^\d+\.\d+' "$current_version")"
           and set -l current_build (string split -f2 - $current_tag)
           or set -l current_build -1
           echo "current_build=$current_build
