@@ -48,10 +48,10 @@ jobs:
         java: [17]
       fail-fast: true
     env:
-      mc_version: ${{ inputs.mc_version || github.event.inputs.mc_version }}
-      build: ${{ inputs.build || github.event.inputs.build }}
-      current_build: ${{ inputs.current_build || github.event.inputs.current_build }}
-      commit: ${{ inputs.commit || github.event.inputs.commit }}
+      mc_version: ${{ inputs.mc_version }}
+      build: ${{ inputs.build }}
+      current_build: ${{ inputs.current_build }}
+      commit: ${{ inputs.commit }}
     steps:
       - name: Install fish Shell
         uses: fish-actions/install-fish@v1.1.0
