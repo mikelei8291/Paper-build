@@ -28,8 +28,13 @@ jobs:
         id: data
         shell: fish {0}
         run: |
-          set -l version_group (curl -sLf https://api.papermc.io/v2/projects/paper | jq -re '.version_groups[-1]') || exit 1
-          set -l build_data (curl -sLf https://api.papermc.io/v2/projects/paper/version_group/$version_group/builds | jq -rec '.builds[-1]') || exit 1
+          function _get_paper_build_data -a index
+              test -z "$index"
+              and set -l index -1
+              set -l version_group (curl -sLf https://api.papermc.io/v2/projects/paper | jq -re '.version_groups['$index']') || exit 1
+              curl -sLf https://api.papermc.io/v2/projects/paper/version_group/$version_group/builds | jq -rec '.builds[-1] // empty'
+          end
+          set -l build_data (_get_paper_build_data || _get_paper_build_data -2) || exit 1
           set -l mc_version (echo $build_data | jq -r '.version')
           set -l current_tag (curl -sLf $GITHUB_API_URL/repos/$GITHUB_REPOSITORY/releases/latest | jq -re '.tag_name') || exit 1
           set -l current_version (string split -f1 - $current_tag)
