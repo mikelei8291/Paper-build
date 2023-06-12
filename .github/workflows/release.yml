@@ -18,6 +18,11 @@ on:
         description: "Commit hash of the build"
         required: true
         type: string
+      prerelease:
+        description: "Whether the release is a pre-release"
+        default: false
+        required: true
+        type: boolean
   workflow_dispatch:
     inputs:
       mc_version:
@@ -36,6 +41,11 @@ on:
         description: "Commit hash of the build"
         required: true
         type: string
+      prerelease:
+        description: "Whether the release is a pre-release"
+        default: false
+        required: true
+        type: boolean
 
 jobs:
   release:
@@ -117,6 +127,7 @@ jobs:
         with:
           name: ${{ inputs.mc_version }}-${{ inputs.build }}
           tag_name: ${{ inputs.mc_version }}-${{ inputs.build }}
+          prerelease: ${{ inputs.prerelease }}
           body_path: release_note.md
           files: |
             paper.jar
