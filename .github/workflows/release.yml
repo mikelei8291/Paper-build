@@ -23,6 +23,11 @@ on:
         default: false
         required: true
         type: boolean
+      version_check:
+        description: "Whether the new version is newer or equal to the current version"
+        default: false
+        required: true
+        type: boolean
   workflow_dispatch:
     inputs:
       mc_version:
@@ -53,6 +58,10 @@ jobs:
     defaults:
       run:
         shell: fish {0}
+    if: >-
+      inputs.commit != 'null'
+      && (inputs.version_check || github.event_name == 'workflow_dispatch')
+      && inputs.build > inputs.current_build
     steps:
       - name: Install fish Shell
         uses: fish-actions/install-fish@v1.1.0

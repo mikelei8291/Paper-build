@@ -54,10 +54,6 @@ jobs:
     strategy:
       matrix: ${{ fromJSON(needs.update.outputs.matrix) }}
       fail-fast: false
-    if: >-
-      matrix.commit != 'null'
-      && matrix.mc_version == matrix.target_version
-      && matrix.build > matrix.current_build
     uses: mikelei8291/Paper-build/.github/workflows/release.yml@master
     with:
       mc_version: ${{ matrix.mc_version }}
@@ -65,3 +61,4 @@ jobs:
       current_build: ${{ matrix.current_build }}
       commit: ${{ matrix.commit }}
       prerelease: ${{ matrix.channel == 'experimental' }}
+      version_check: ${{ matrix.mc_version == matrix.target_version }}
