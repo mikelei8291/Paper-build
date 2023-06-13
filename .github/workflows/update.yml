@@ -54,6 +54,7 @@ jobs:
     strategy:
       matrix: ${{ fromJSON(needs.update.outputs.matrix) }}
       fail-fast: false
+    name: release (${{ format('{0}-{1}, {2}', matrix.mc_version, matrix.build, matrix.channel) }})
     uses: mikelei8291/Paper-build/.github/workflows/release.yml@master
     with:
       mc_version: ${{ matrix.mc_version }}
