@@ -47,13 +47,12 @@ jobs:
               set -l target_version (echo -e "$current_version\n$mc_version" | sort -rV | head -1)
               set -a matrix (echo $_data | jq -rc '{mc_version: .version, build, channel, commit: .changes[0].commit, current_build: '$current_build', target_version: "'$target_version'"}')
           end
-          echo "matrix=$(echo $matrix | jq -rcs '.')" >> "$GITHUB_OUTPUT"
+          echo "matrix=$(echo $matrix | jq -rcs '{include: .}')" >> "$GITHUB_OUTPUT"
           string replace -a "=" ": " < "$GITHUB_OUTPUT"
   release:
     needs: update
     strategy:
-      matrix:
-        include: ${{ fromJSON(needs.update.outputs.matrix) }}
+      matrix: ${{ fromJSON(needs.update.outputs.matrix) }}
       fail-fast: false
     if: >-
       matrix.commit != 'null'
