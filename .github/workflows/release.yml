@@ -3,51 +3,51 @@ on:
   workflow_call:
     inputs:
       mc_version:
-        description: "Minecraft version"
+        description: Minecraft version
         required: true
         type: string
       build:
-        description: "Paper build number"
+        description: Paper build number
         required: true
         type: number
       current_build:
-        description: "Current Paper build number"
+        description: Current Paper build number
         required: true
         type: number
       commit:
-        description: "Commit hash of the build"
+        description: Commit hash of the build
         required: true
         type: string
       prerelease:
-        description: "Whether the release is a pre-release"
+        description: Whether the release is a pre-release
         default: false
         required: true
         type: boolean
       version_check:
-        description: "Whether the new version is newer or equal to the current version"
+        description: Whether the new version is newer or equal to the current version
         default: false
         required: true
         type: boolean
   workflow_dispatch:
     inputs:
       mc_version:
-        description: "Minecraft version"
+        description: Minecraft version
         required: true
         type: string
       build:
-        description: "Paper build number"
+        description: Paper build number
         required: true
         type: number
       current_build:
-        description: "Current Paper build number"
+        description: Current Paper build number
         required: true
         type: number
       commit:
-        description: "Commit hash of the build"
+        description: Commit hash of the build
         required: true
         type: string
       prerelease:
-        description: "Whether the release is a pre-release"
+        description: Whether the release is a pre-release
         default: false
         required: true
         type: boolean
