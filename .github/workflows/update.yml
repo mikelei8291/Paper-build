@@ -24,6 +24,8 @@ jobs:
       - name: Update Build Data
         id: data
         shell: fish {0}
+        env:
+          fish_features: qmark-noglob
         run: |
           function _get_paper_build_data -a index
               test -z "$index"
