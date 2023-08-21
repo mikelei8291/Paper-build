@@ -8,6 +8,7 @@ Custom build of Paper - the most widely used, high-performance Minecraft server
 
 - GitHub: https://github.com/PaperMC/Paper
 - Website: https://papermc.io
+- Build Explorer: https://papermc.io/downloads/all
 - Documentation: https://docs.papermc.io
 
 ## Dropped Patches
