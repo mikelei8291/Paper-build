@@ -30,14 +30,14 @@ jobs:
           function _get_paper_build_data -a index
               test -z "$index"
               and set -l index -1
-              set -l version_group (curl -sLf https://api.papermc.io/v2/projects/paper | jq -re '.version_groups['$index']') || exit 1
-              curl -sLf https://api.papermc.io/v2/projects/paper/version_group/$version_group/builds | jq -rec '.builds[-1] // empty'
+              set -l mc_version (curl -sLf https://api.papermc.io/v2/projects/paper | jq -re '.versions['$index']') || exit 1
+              curl -sLf https://api.papermc.io/v2/projects/paper/versions/$mc_version/builds | jq -rec '(.builds[-1] | .version = "'$mc_version'") // empty'
           end
           set -l build_data (_get_paper_build_data)
           or set build_data (_get_paper_build_data -2) || exit 1
           echo $build_data | jq -re '.channel == "experimental"' > /dev/null
           and set -a build_data (_get_paper_build_data -2)
-          set -l tags "$(curl -sLf $GITHUB_API_URL/repos/$GITHUB_REPOSITORY/tags?per_page=100)" || exit 1
+          set -l tags (curl -sLf $GITHUB_API_URL/repos/$GITHUB_REPOSITORY/tags?per_page=100 | jq -rc '.') || exit 1
           set -l matrix
           for _data in $build_data
               set -l mc_version (echo $_data | jq -r '.version')
