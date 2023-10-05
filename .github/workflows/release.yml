@@ -110,20 +110,17 @@ jobs:
           mv build/libs/paper-paperclip-(grep -Po '^version=\K.+$' gradle.properties)-reobf.jar paper.jar
           b3sum paper.jar > paper.b3sum
           echo "[![${{ github.workflow }}](https://flat.badgen.net/badge/${{ github.workflow }}/%23${{ github.run_number }}/green?icon=github)](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
-          
+
           ## Changelog
           " > release_note.md
-          if test (math ${{ inputs.build }} - ${{ inputs.current_build }}) -gt 1
-              curl -sLf https://api.papermc.io/v2/projects/paper/version_group/(string match -r '\d+\.\d+' ${{ inputs.mc_version }})/builds\
-              | jq -r '.builds[] | select(.build > ${{ inputs.current_build }} and .build <= ${{ inputs.build }})
-                  | "- **\(.build)**", "  - \((.changes[] | "[PaperMC/Paper@\(.commit[:7])] \(.summary)") // "No changes")"'
-          else
-              curl -sLf https://api.papermc.io/v2/projects/paper/versions/${{ inputs.mc_version }}/builds/${{ inputs.build }}\
-              | jq -r '"- \((.changes[] | "[PaperMC/Paper@\(.commit[:7])] \(.summary)") // "No changes")"'
-          end | string replace -ra '#\d+' 'PaperMC/Paper$0' | string replace -ra ' (@\S+)' ' `$1`' >> release_note.md
+          curl -sLf https://api.papermc.io/v2/projects/paper/versions/${{ inputs.mc_version }}/builds\
+              | jq -rc '.builds | map(select(.build > ${{ inputs.current_build }} and .build <= ${{ inputs.build }})) | if (. | length) > 1
+              then .[] | "- **\(.build)**", "  - \((.changes[] | "[PaperMC/Paper@\(.commit[:7])] \(.summary)") // "No changes")"
+              else .[] | "- \((.changes[] | "[PaperMC/Paper@\(.commit[:7])] \(.summary)") // "No changes")" end'\
+              | string replace -ra '#\d+' 'PaperMC/Paper$0' | string replace -ra ' (@\S+)' ' `$1`' >> release_note.md
           echo "
           ## BLAKE3 checksum
-          
+
           ```
           $(cat paper.b3sum)
           ```" >> release_note.md
